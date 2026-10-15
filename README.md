@@ -37,6 +37,15 @@ GET /{code}
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    C["Client"] -->|"POST /shorten"| API["API Gateway"]
+    C -->|"GET /code"| API
+    API --> L["Lambda (Python)"]
+    L -->|"PutItem and GetItem"| DDB[("DynamoDB table<br/>pay per request")]
+    L -.->|"302 redirect"| C
+```
+
 - **DynamoDB** — a single table (`id` as the primary key), billed
   `PAY_PER_REQUEST` (pay only for actual reads/writes, no fixed
   capacity to provision or pay for when idle).
